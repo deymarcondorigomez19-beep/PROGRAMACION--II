@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Práctica 1 - Programación II</title>
+  <link rel="stylesheet" href="estilos/style.css">
+</head>
+<body>
+  <div class="container">
+    <div style="margin-bottom: 20px;">
+      <a href="index.html" class="btn btn-secondary">← Volver a la página principal</a>
+    </div>
+
+    <header>
+      <h1>Práctica 1: Laboratorio 01 (POO)</h1>
+      <p><strong>Fecha de Entrega:</strong> 2 de septiembre de 2026</p>
+      <p><strong>Lenguaje utilizado:</strong> Python </p>
+    </header>
+
+    <main>
+      <!-- Ejercicio 1 -->
+      <section class="problem-card">
+        <h2>1. Clase Cronómetro</h2>
+        <p>Diseño e implementación de una clase Cronometro para medir el tiempo de ejecución en milisegundos.</p>
+        
+        <div class="sub-section">
+          <span class="badge-poo">Diagrama UML</span>
+          <pre><code>+------------------------------------+
+|             Cronometro             |
++------------------------------------+
+| - __inicia: float                  |
+| - __finaliza: float                |
++------------------------------------+
+| + __init__()                       |
+| + get_inicia(): float              |
+| + get_finaliza(): float            |
+| + inicia(): None                   |
+| + detener(): None                  |
+| + lapsoDeTiempo(): float           |
++------------------------------------+</code></pre>
+        </div>
+
+        <div class="sub-section">
+          <span class="badge-poo">Código Python</span>
+          <pre><code>import time
+import random
+
+class Cronometro:
+    def __init__(self):
+        self.__inicia = time.time() * 1000
+        self.__finaliza = self.__inicia
+
+    def get_inicia(self):
+        return self.__inicia
+
+    def get_finaliza(self):
+        return self.__finaliza
+
+    def inicia(self):
+        self.__inicia = time.time() * 1000
+
+    def detener(self):
+        self.__finaliza = time.time() * 1000
+
+    def lapsoDeTiempo(self):
+        return self.__finaliza - self.__inicia
+
+def ordenacion_por_seleccion(arr):
+    n = len(arr)
+    for i in range(n):
+        min_idx = i
+        for j in range(i + 1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+
+if __name__ == "__main__":
+    numeros = [random.randint(1, 1000000) for _ in range(100000)]
+    c = Cronometro()
+    c.inicia()
+    ordenacion_por_seleccion(numeros)
+    c.detener()
+    print(f"Tiempo: {c.lapsoDeTiempo():.2f} ms")</code></pre>
+        </div>
+      </section>
+
+      <!-- Ejercicio 2 -->
+      <section class="problem-card">
+        <h2>2. Álgebra: Ecuación Lineal 2x2</h2>
+        <p>Resolución de sistemas de ecuaciones lineales $ax + by = e$, $cx + dy = f$.</p>
+
+        <div class="sub-section">
+          <span class="badge-poo">Diagrama UML</span>
+          <pre><code>+------------------------------------+
+|           EcuacionLineal           |
++------------------------------------+
+| - __a: float                       |
+| - __b: float                       |
+| - __c: float                       |
+| - __d: float                       |
+| - __e: float                       |
+| - __f: float                       |
++------------------------------------+
+| + __init__(a, b, c, d, e, f)       |
+| + get_a(): float                   |
+| + get_b(): float                   |
+| + get_c(): float                   |
+| + get_d(): float                   |
+| + get_e(): float                   |
+| + get_f(): float                   |
+| + tieneSolucion(): bool            |
+| + getX(): float                    |
+| + getY(): float                    |
++------------------------------------+</code></pre>
+        </div>
+
+        <div class="sub-section">
+          <span class="badge-poo">Código Python</span>
+          <pre><code>class EcuacionLineal:
+    def __init__(self, a, b, c, d, e, f):
+        self.__a = float(a)
+        self.__b = float(b)
+        self.__c = float(c)
+        self.__d = float(d)
+        self.__e = float(e)
+        self.__f = float(f)
+
+    def get_a(self): return self.__a
+    def get_b(self): return self.__b
+    def get_c(self): return self.__c
+    def get_d(self): return self.__d
+    def get_e(self): return self.__e
+    def get_f(self): return self.__f
+
+    def tieneSolucion(self):
+        denominador = (self.__a * self.__d) - (self.__b * self.__c)
+        return denominador != 0
+
+    def getX(self):
+        denominador = (self.__a * self.__d) - (self.__b * self.__c)
+        numerador = (self.__e * self.__d) - (self.__b * self.__f)
+        return numerador / denominador
+
+    def getY(self):
+        denominador = (self.__a * self.__d) - (self.__b * self.__c)
+        numerador = (self.__a * self.__f) - (self.__e * self.__c)
+        return numerador / denominador
+
+if __name__ == "__main__":
+    cadena = input("Ingrese a, b, c, d, e, f: ")
+    valores = cadena.replace(',', ' ').split()
+
+    if len(valores) >= 6:
+        a, b, c, d, e, f = valores[0], valores[1], valores[2], valores[3], valores[4], valores[5]
+    else:
+        a = valores[0]
+        b, c, d = input("b: "), input("c: "), input("d: ")
+        e, f = input("e: "), input("f: ")
+
+    eq = EcuacionLineal(a, b, c, d, e, f)
+
+    if eq.tieneSolucion():
+        print(f"x = {eq.getX():.1f}, y = {eq.getY():.1f}")
+    else:
+        print("La ecuación no tiene solución")</code></pre>
+        </div>
+      </section>
+
+      <!-- Ejercicio 3 -->
+      <section class="problem-card">
+        <h2>3. Álgebra: Ecuaciones Cuadráticas</h2>
+        <p>Resolución de ecuaciones de segundo grado $ax^2 + bx + c = 0$.</p>
+
+        <div class="sub-section">
+          <span class="badge-poo">Diagrama UML</span>
+          <pre><code>+------------------------------------+
+|         EcuacionCuadratica         |
++------------------------------------+
+| - __a: float                       |
+| - __b: float                       |
+| - __c: float                       |
++------------------------------------+
+| + __init__(a, b, c)                |
+| + get_a(): float                   |
+| + get_b(): float                   |
+| + get_c(): float                   |
+| + getDiscriminante(): float        |
+| + getRaiz1(): float                |
+| + getRaiz2(): float                |
++------------------------------------+</code></pre>
+        </div>
+
+        <div class="sub-section">
+          <span class="badge-poo">Código Python</span>
+          <pre><code>import math
+
+class EcuacionCuadratica:
+    def __init__(self, a, b, c):
+        self.__a = float(a)
+        self.__b = float(b)
+        self.__c = float(c)
+
+    def get_a(self): return self.__a
+    def get_b(self): return self.__b
+    def get_c(self): return self.__c
+
+    def getDiscriminante(self):
+        return (self.__b ** 2) - (4 * self.__a * self.__c)
+
+    def getRaiz1(self):
+        disc = self.getDiscriminante()
+        if disc < 0:
+            return 0.0
+        return (-self.__b + math.sqrt(disc)) / (2 * self.__a)
+
+    def getRaiz2(self):
+        disc = self.getDiscriminante()
+        if disc < 0:
+            return 0.0
+        return (-self.__b - math.sqrt(disc)) / (2 * self.__a)
+
+if __name__ == "__main__":
+    cadena = input("Ingrese a, b, c: ")
+    valores = cadena.replace(',', ' ').split()
+
+    if len(valores) >= 3:
+        a, b, c = valores[0], valores[1], valores[2]
+    else:
+        a = valores[0]
+        b = input("Ingrese b: ")
+        c = input("Ingrese c: ")
+
+    eq = EcuacionCuadratica(a, b, c)
+    disc = eq.getDiscriminante()
+
+    if disc > 0:
+        print(f"La ecuación tiene dos raíces {eq.getRaiz1():.6g} y {eq.getRaiz2():.6g}")
+    elif disc == 0:
+        print(f"La ecuación tiene una raíz {eq.getRaiz1():.6g}")
+    else:
+        print("La ecuación no tiene raíces reales")</code></pre>
+        </div>
+      </section>
+
+      <!-- Ejercicio 4 -->
+      <section class="problem-card">
+        <h2>4. Estadísticas: Promedio y Desviación Estándar</h2>
+        <p>Cálculo del promedio y desviación estándar de 10 números ingresados por el usuario.</p>
+
+        <!-- Solución 1: POO -->
+        <div class="sub-section">
+          <span class="badge-poo">Solución 1: Programación Orientada a Objetos (POO)</span>
+          <p><strong>Diagrama UML:</strong></p>
+          <pre><code>+------------------------------------+
+|            Estadistica             |
++------------------------------------+
+| - __datos: list                    |
++------------------------------------+
+| + __init__(datos: list)            |
+| + promedio(): float                |
+| + desviacion(): float              |
++------------------------------------+</code></pre>
+          <p><strong>Código Python:</strong></p>
+          <pre><code>import math
+
+class Estadistica:
+    def __init__(self, datos):
+        self.__datos = []
+        for x in datos:
+            self.__datos.append(float(x))
+
+    def promedio(self):
+        n = len(self.__datos)
+        if n == 0: return 0.0
+        suma = 0.0
+        for x in self.__datos:
+            suma += x
+        return suma / n
+
+    def desviacion(self):
+        n = len(self.__datos)
+        if n <= 1: return 0.0
+        prom = self.promedio()
+        suma_cuadrados = 0.0
+        for x in self.__datos:
+            suma_cuadrados += (x - prom) ** 2
+        return math.sqrt(suma_cuadrados / (n - 1))
+
+if __name__ == "__main__":
+    print("Ingrese 10 números:")
+    numeros = []
+    while len(numeros) < 10:
+        linea = input()
+        partes = linea.replace(',', ' ').split()
+        for valor in partes:
+            numeros.append(valor)
+            if len(numeros) == 10: break
+
+    est = Estadistica(numeros)
+    print(f"El promedio es {est.promedio():.2f}")
+    print(f"La desviación estandard es {est.desviacion():.5f}")</code></pre>
+        </div>
+
+        <!-- Solución 2: Modular-Estructurada -->
+        <div class="sub-section">
+          <span class="badge-modular">Solución 2: Programación Modular-Estructurada</span>
+          <p><strong>Código Python:</strong></p>
+          <pre><code>import math
+
+def promedio(datos):
+    n = len(datos)
+    if n == 0: return 0.0
+    suma = 0.0
+    for x in datos:
+        suma += x
+    return suma / n
+
+def desviacion(datos):
+    n = len(datos)
+    if n <= 1: return 0.0
+    prom = promedio(datos)
+    suma_cuadrados = 0.0
+    for x in datos:
+        suma_cuadrados += (x - prom) ** 2
+    return math.sqrt(suma_cuadrados / (n - 1))
+
+if __name__ == "__main__":
+    print("Ingrese 10 números:")
+    numeros = []
+    while len(numeros) < 10:
+        linea = input()
+        partes = linea.replace(',', ' ').split()
+        for valor in partes:
+            numeros.append(float(valor))
+            if len(numeros) == 10: break
+
+    prom = promedio(numeros)
+    desv = desviacion(numeros)
+
+    print(f"El promedio es {prom:.2f}")
+    print(f"La desviación estandard es {desv:.5f}")</code></pre>
+        </div>
+
+        <!-- Ventajas POO -->
+        <div style="margin-top: 15px;">
+          <h3 style="color: var(--accent-blue); margin-bottom: 8px;">Ventajas de la POO sobre la Programación Modular</h3>
+          <ul style="color: var(--text-secondary);">
+            <li><strong>Encapsulamiento:</strong> Protege la lista de datos (`__datos`) mediante acceso privado, garantizando la integridad del estado.</li>
+            <li><strong>Reutilización y Modulabilidad:</strong> La clase `Estadistica` actúa como una unidad autónoma exportable a cualquier otro script sin alterar la lógica global.</li>
+            <li><strong>Mantenibilidad:</strong> Permite cambiar o afinar los algoritmos internos de cálculo sin alterar las llamadas del programa cliente.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html> 
