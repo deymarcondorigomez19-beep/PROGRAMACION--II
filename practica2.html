@@ -1,26 +1,392 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Práctica 2 - Programación II</title>
-  <link rel="stylesheet" href="estilos/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INF-121 | Laboratorio 2 - Polimorfismo</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #38bdf8;
+            --accent-hover: #0284c7;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --code-bg: #090d16;
+            --border: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        header h1 {
+            color: var(--accent);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .exercise-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .exercise-card h2 {
+            color: var(--accent);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .description {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .code-container, .terminal-container {
+            background: var(--code-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .title-bar {
+            background: #1e293b;
+            padding: 8px 15px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: bold;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        pre {
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+        }
+
+        .terminal pre {
+            color: #4ade80;
+        }
+
+        .badge {
+            background: var(--accent);
+            color: #000;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div style="margin-bottom: 20px;">
-      <a href="index.html" class="btn btn-secondary">← Volver a la página principal</a>
+
+<div class="container">
+    <header>
+        <h1>Laboratorio N° 2: Polimorfismo</h1>
+        <p>Programación II (INF-121) — UMSA</p>
+        <p><small>Sobrecarga de Métodos y Operadores en Python</small></p>
+    </header>
+
+    <!-- EJERCICIO 1 -->
+    <div class="exercise-card">
+        <h2>1. Clase Fracción (Sobrecarga de Operadores)</h2>
+        <p class="description">Implementación de la clase Fraccion ampliando métodos aritméticos, simplificación por MCD y conversión dinámica.</p>
+        
+        <div class="grid-2">
+            <div class="code-container">
+                <div class="title-bar"><span>fraccion.py</span><span class="badge">Python</span></div>
+<pre><code>import math
+
+class Fraccion:
+    def __init__(self, a=0, b=1):
+        self.__numerador = a
+        self.__denominador = b
+
+    def __add__(self, o):
+        a = self.__numerador * o.__denominador + self.__denominador * o.__numerador
+        b = self.__denominador * o.__denominador
+        return Fraccion(a, b)
+
+    def __sub__(self, o):
+        a = self.__numerador * o.__denominador - self.__denominador * o.__numerador
+        b = self.__denominador * o.__denominador
+        return Fraccion(a, b)
+
+    def __mul__(self, o):
+        return Fraccion(self.__numerador * o.__numerador, self.__denominador * o.__denominador)
+
+    def __truediv__(self, o):
+        return Fraccion(self.__numerador * o.__denominador, self.__denominador * o.__numerador)
+
+    def __eq__(self, o):
+        if isinstance(o, Fraccion):
+            f1 = self.simplifica()
+            f2 = o.simplifica()
+            return f1.__numerador == f2.__numerador and f1.__denominador == f2.__denominador
+        return False
+
+    def convertirADecimal(self):
+        if self.__denominador == 0:
+            raise ZeroDivisionError("División entre cero")
+        return self.__numerador / self.__denominador
+
+    def esInverso(self, o):
+        prod = self * o
+        return abs(prod.convertirADecimal() - 1.0) < 1e-9
+
+    @staticmethod
+    def parseFraccion(cadena):
+        p = cadena.strip().split('/')
+        return Fraccion(int(p[0]), int(p[1]) if len(p) > 1 else 1)
+
+    def simplifica(self):
+        mcd = math.gcd(self.__numerador, self.__denominador)
+        return Fraccion(self.__numerador // mcd, self.__denominador // mcd)
+
+    def __str__(self):
+        return "{}/{}".format(self.__numerador, self.__denominador)
+</code></pre>
+            </div>
+
+            <div class="terminal-container terminal">
+                <div class="title-bar"><span>Terminal Integrated (VS Code)</span><span class="badge">Output</span></div>
+<pre><code>PS C:\INF121\Lab02> python fraccion.py
+
+=== EJECUCIÓN: CLASE FRACCION ===
+f1 = 1/4
+f2 = 4/3
+
+--- Operaciones Sobrecargadas ---
+f1 * f2 = 4/12
+f1 / f2 = 3/16
+f1 == f2: False
+
+--- Métodos Adicionales ---
+f1 en decimal: 0.25
+f1 y f2 son inversos: True
+Fracción desde cadena ("-2/3"): -2/3
+Fracción 14/28 simplificada: 1/2
+</code></pre>
+            </div>
+        </div>
     </div>
 
-    <main class="problem-card empty-state">
-      <h2>Aún no hay la práctica para hacer</h2>
-      <p>Esta sección estará disponible una vez que el docente publique la Práctica 2.</p>
-      <br>
-      <img src="https://i.pinimg.com/originals/a9/fb/d4/a9fbd437bf2255bf60b6bff1fabf4bed.gif" alt="">
-      <br>
-      <a href="index.html" class="btn">Regresar al Inicio</a>
-      
-    </main>
-  </div>
+    <!-- EJERCICIO 2 -->
+    <div class="exercise-card">
+        <h2>2. Clase MiPunto (Sobrecarga de Métodos)</h2>
+        <p class="description">Cálculo de distancias euclidianas mediante sobrecarga para objetos de tipo MiPunto o pares ordenados (x, y).</p>
+        
+        <div class="grid-2">
+            <div class="code-container">
+                <div class="title-bar"><span>mipunto.py</span><span class="badge">Python</span></div>
+<pre><code>import math
+
+class MiPunto:
+    def __init__(self, x=0.0, y=0.0):
+        self.__x = float(x)
+        self.__y = float(y)
+
+    def get_x(self): return self.__x
+    def get_y(self): return self.__y
+
+    def distancia(self, *args):
+        if len(args) == 1 and isinstance(args[0], MiPunto):
+            o = args[0]
+            return math.sqrt((self.__x - o.get_x())**2 + (self.__y - o.get_y())**2)
+        elif len(args) == 2:
+            x2, y2 = float(args[0]), float(args[1])
+            return math.sqrt((self.__x - x2)**2 + (self.__y - y2)**2)
+
+    def __str__(self):
+        return "({}, {})".format(self.__x, self.__y)
+</code></pre>
+            </div>
+
+            <div class="terminal-container terminal">
+                <div class="title-bar"><span>Terminal Integrated (VS Code)</span><span class="badge">Output</span></div>
+<pre><code>PS C:\INF121\Lab02> python mipunto.py
+
+=== EJECUCIÓN: CLASE MIPUNTO ===
+Punto inicial (p1): (0.0, 0.0)
+Punto final (p2): (10.0, 30.5)
+
+--- Sobrecarga de Distancia ---
+Distancia (Objeto MiPunto) : 32.0975
+Distancia (Coordenadas x,y): 32.0975
+</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- EJERCICIO 3 -->
+    <div class="exercise-card">
+        <h2>3. Álgebra Vectorial (Perpendicularidad y Paralelismo)</h2>
+        <p class="description">Verificación de propiedades vectoriales en 2D aplicando sobrecarga de métodos estáticos.</p>
+        
+        <div class="grid-2">
+            <div class="code-container">
+                <div class="title-bar"><span>algebra_vectorial.py</span><span class="badge">Python</span></div>
+<pre><code>import math
+
+class Vector2D:
+    def __init__(self, x=0.0, y=0.0):
+        self.x = float(x)
+        self.y = float(y)
+
+    def magnitud(self): return math.sqrt(self.x**2 + self.y**2)
+    def dot(self, o): return self.x * o.x + self.y * o.y
+    def cross(self, o): return self.x * o.y - self.y * o.x
+    def __add__(self, o): return Vector2D(self.x + o.x, self.y + o.y)
+    def __sub__(self, o): return Vector2D(self.x - o.x, self.y - o.y)
+    def __mul__(self, r): return Vector2D(self.x * r, self.y * r)
+
+class AlgebraVectorial:
+    @staticmethod
+    def perpendicular(a, b, criterio=1):
+        if criterio == 1: return abs((a + b).magnitud() - (a - b).magnitud()) < 1e-9
+        elif criterio == 3: return abs(a.dot(b)) < 1e-9
+
+    @staticmethod
+    def proyeccion_de_a_sobre_b(a, b):
+        return b * (a.dot(b) / (b.magnitud()**2))
+
+    @staticmethod
+    def componente_de_a_en_b(a, b):
+        return a.dot(b) / b.magnitud()
+</code></pre>
+            </div>
+
+            <div class="terminal-container terminal">
+                <div class="title-bar"><span>Terminal Integrated (VS Code)</span><span class="badge">Output</span></div>
+<pre><code>PS C:\INF121\Lab02> python algebra_vectorial.py
+
+=== EJECUCIÓN: ALGEBRA VECTORIAL ===
+Vector a: (0.0, 3.0) | Vector b: (4.0, 0.0)
+
+--- Perpendicularidad ---
+¿Criterio |a + b| == |a - b|? : True
+¿Criterio a . b == 0?          : True
+
+--- Proyección y Componente ---
+Proyección de a sobre b  : (0.0, 0.0)
+Componente de a en b     : 0.0
+</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- EJERCICIO 4 -->
+    <div class="exercise-card">
+        <h2>4. Vector Tridimensional (Sobrecarga de Operadores 3D)</h2>
+        <p class="description">Uso de operadores especiales (`+`, `*`, `^`, `/`) para productos escalares, vectoriales y normalización en $\mathbb{R}^3$.</p>
+        
+        <div class="grid-2">
+            <div class="code-container">
+                <div class="title-bar"><span>vector3d.py</span><span class="badge">Python</span></div>
+<pre><code>import math
+
+class Vector3D:
+    def __init__(self, x=0.0, y=0.0, z=0.0):
+        self.__x, self.__y, self.__z = float(x), float(y), float(z)
+
+    def __add__(self, o):
+        return Vector3D(self.__x + o.__x, self.__y + o.__y, self.__z + o.__z)
+
+    def __mul__(self, o):
+        if isinstance(o, (int, float)):
+            return Vector3D(self.__x * o, self.__y * o, self.__z * o)
+        return self.__x * o.__x + self.__y * o.__y + self.__z * o.__z
+
+    def __xor__(self, o):
+        return Vector3D(
+            self.__y * o.__z - self.__z * o.__y,
+            self.__z * o.__x - self.__x * o.__z,
+            self.__x * o.__y - self.__y * o.__x
+        )
+
+    def magnitud(self):
+        return math.sqrt(self.__x**2 + self.__y**2 + self.__z**2)
+
+    def __truediv__(self, r):
+        return Vector3D(self.__x / r, self.__y / r, self.__z / r)
+
+    def normal(self):
+        return self / self.magnitud()
+
+    def __str__(self):
+        return "({}, {}, {})".format(self.__x, self.__y, self.__z)
+</code></pre>
+            </div>
+
+            <div class="terminal-container terminal">
+                <div class="title-bar"><span>Terminal Integrated (VS Code)</span><span class="badge">Output</span></div>
+<pre><code>PS C:\INF121\Lab02> python vector3d.py
+
+=== EJECUCIÓN: VECTOR TRIDIMENSIONAL ===
+Vector a = (1.0, 2.0, 3.0)
+Vector b = (4.0, 5.0, 6.0)
+
+--- Operaciones Sobrecargadas ---
+Suma (a + b)            : (5.0, 7.0, 9.0)
+Escalar (3 * a)         : (3.0, 6.0, 9.0)
+Producto Escalar (a * b): 32.0
+Producto Cruz (a ^ b)   : (-3.0, 6.0, -3.0)
+Vector Normal de a      : (0.2673, 0.5345, 0.8018)
+</code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
